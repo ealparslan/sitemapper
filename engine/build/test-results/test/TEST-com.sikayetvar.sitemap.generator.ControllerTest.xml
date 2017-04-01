@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.sikayetvar.sitemap.generator.ControllerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2017-03-20T19:44:42" hostname="Denizs-MacBook-Pro.local" time="11.54">
+  <properties/>
+  <testcase name="test1CombinationOutput" classname="com.sikayetvar.sitemap.generator.ControllerTest" time="11.54"/>
+  <system-out><![CDATA[log4j: reset attribute= "false".
+log4j: Threshold ="null".
+log4j: Level value for root is  [DEBUG].
+log4j: root level set to DEBUG
+log4j: Class name: [org.apache.log4j.RollingFileAppender]
+log4j: Setting property [append] to [false].
+log4j: Setting property [maxFileSize] to [10MB].
+log4j: Setting property [maxBackupIndex] to [5].
+log4j: Setting property [threshold] to [ERROR].
+log4j: Setting property [file] to [logs/error-api.xml].
+log4j: Parsing layout of class: "org.apache.log4j.PatternLayout"
+log4j: Setting property [conversionPattern] to [%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n].
+log4j: setFile called: logs/error-api.xml, false
+log4j: setFile ended
+log4j: Adding appender named [errorfile] to category [root].
+log4j: Class name: [org.apache.log4j.RollingFileAppender]
+log4j: Setting property [append] to [false].
+log4j: Setting property [maxFileSize] to [10MB].
+log4j: Setting property [maxBackupIndex] to [5].
+log4j: Setting property [threshold] to [WARN].
+log4j: Setting property [file] to [logs/warning-api.xml].
+log4j: Parsing layout of class: "org.apache.log4j.PatternLayout"
+log4j: Setting property [conversionPattern] to [%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n].
+log4j: Setting property [levelMin] to [WARN].
+log4j: Setting property [levelMax] to [WARN].
+log4j: Setting property [acceptOnMatch] to [true].
+log4j: Adding filter of type [class org.apache.log4j.varia.LevelRangeFilter] to appender named [warningfile].
+log4j: setFile called: logs/warning-api.xml, false
+log4j: setFile ended
+log4j: Adding appender named [warningfile] to category [root].
+log4j: Class name: [org.apache.log4j.RollingFileAppender]
+log4j: Setting property [append] to [false].
+log4j: Setting property [maxFileSize] to [10MB].
+log4j: Setting property [maxBackupIndex] to [5].
+log4j: Setting property [threshold] to [DEBUG].
+log4j: Setting property [file] to [logs/debug-api.xml].
+log4j: Parsing layout of class: "org.apache.log4j.PatternLayout"
+log4j: Setting property [conversionPattern] to [%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n].
+log4j: Setting property [levelMin] to [DEBUG].
+log4j: Setting property [levelMax] to [DEBUG].
+log4j: Setting property [acceptOnMatch] to [true].
+log4j: Adding filter of type [class org.apache.log4j.varia.LevelRangeFilter] to appender named [debugfile].
+log4j: setFile called: logs/debug-api.xml, false
+log4j: setFile ended
+log4j: Adding appender named [debugfile] to category [root].
+log4j: Class name: [org.apache.log4j.ConsoleAppender]
+log4j: Setting property [threshold] to [INFO].
+log4j: Setting property [levelMin] to [INFO].
+log4j: Setting property [levelMax] to [INFO].
+log4j: Setting property [acceptOnMatch] to [true].
+log4j: Adding filter of type [class org.apache.log4j.varia.LevelRangeFilter] to appender named [console].
+log4j: Parsing layout of class: "org.apache.log4j.PatternLayout"
+log4j: Setting property [conversionPattern] to [%d [%t] %-5p %c - %m%n].
+log4j: Adding appender named [console] to category [root].
+2017-03-20 12:44:42,718 [Test worker] INFO  com.sikayetvar.sitemap.generator.Configuration - Config file <engine.properties> not found
+2017-03-20 12:44:42,721 [Test worker] INFO  com.sikayetvar.sitemap.generator.Configuration - Falling back to default hardcoded values.
+2017-03-20 12:44:43,337 [Test worker] INFO  com.sikayetvar.sitemap.generator.dao.MySQLDataOperator - Corpus Loaded!
+2017-03-20 12:44:43,389 [Test worker] INFO  com.sikayetvar.sitemap.generator.dao.MySQLDataOperator - Companies Loaded!
+2017-03-20 12:44:54,215 [Test worker] INFO  com.sikayetvar.sitemap.generator.dao.MySQLDataOperator - Complaints Loaded!
+2017-03-20 12:44:54,216 [Test worker] INFO  com.sikayetvar.sitemap.generator.Controller - 3 will be processed in this chunk! 
+I'm starting!
+I'm starting!
+I'm starting!
+I'm done! 48
+I'm done! 59
+I'm done! 59
+2017-03-20 12:44:54,243 [Test worker] INFO  com.sikayetvar.sitemap.generator.Controller - Processor returned! 
+2017-03-20 12:44:54,243 [Test worker] INFO  com.sikayetvar.sitemap.generator.Controller - Test started! 
+]]></system-out>
+  <system-err><![CDATA[log4j:WARN Continuable parsing error 62 and column 16
+log4j:WARN The content of element type "appender" must match "(errorHandler?,param*,rollingPolicy?,triggeringPolicy?,connectionSource?,layout?,filter*,appender-ref*)".
+log4j:WARN No such property [append] in org.apache.log4j.ConsoleAppender.
+]]></system-err>
+</testsuite>

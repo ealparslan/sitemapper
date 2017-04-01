@@ -1,0 +1,58 @@
+group 'com.sikayetvar.sitemapper'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+sourceCompatibility = 1.8
+
+
+/*//create a single Jar with all dependencies
+task distSitemapper(type: Jar) {
+    manifest {
+        Attributes 'Implementation-Title': 'Sitemap engine',
+                'Implementation-Version': version,
+                'Main-Class': 'com.sikayetvar.sitemap.generator.Controller'
+    }
+    baseName = project.name + '-all'
+    archiveName = 'Sitemapper.jar'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}*/
+/*
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Sitemap engine',
+                'Implementation-Version': version,
+                'Main-Class': 'com.sikayetvar.sitemap.generator.Controller'
+    }
+    baseName = project.name + '-all'
+    archiveName = 'Sitemapper.jar'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}*/
+
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Sitemap engine',
+                'Implementation-Version': version,
+                'Main-Class': 'com.sikayetvar.sitemap.generator.Controller'
+    }
+    jar.archiveName = 'Sitemapper.jar'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.16'
+    compile "com.google.guava:guava:16+"
+    compile group: 'redis.clients', name: 'jedis', version: '2.9.0'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.24'
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.24'
+    compile group: 'org.apache.commons', name: 'commons-configuration2', version: '2.1'
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
+    compile group: 'com.ecyrd.speed4j', name: 'speed4j', version: '0.18'
+}

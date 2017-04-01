@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - Class com.sikayetvar.sitemap.generator.ControllerTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class com.sikayetvar.sitemap.generator.ControllerTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.sikayetvar.sitemap.generator.html">com.sikayetvar.sitemap.generator</a> &gt; ControllerTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">1</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">11.540s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+<li>
+<a href="#tab2">Standard error</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">test1CombinationOutput</td>
+<td>11.540s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>log4j: reset attribute= &quot;false&quot;.
+log4j: Threshold =&quot;null&quot;.
+log4j: Level value for root is  [DEBUG].
+log4j: root level set to DEBUG
+log4j: Class name: [org.apache.log4j.RollingFileAppender]
+log4j: Setting property [append] to [false].
+log4j: Setting property [maxFileSize] to [10MB].
+log4j: Setting property [maxBackupIndex] to [5].
+log4j: Setting property [threshold] to [ERROR].
+log4j: Setting property [file] to [logs/error-api.xml].
+log4j: Parsing layout of class: &quot;org.apache.log4j.PatternLayout&quot;
+log4j: Setting property [conversionPattern] to [%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n].
+log4j: setFile called: logs/error-api.xml, false
+log4j: setFile ended
+log4j: Adding appender named [errorfile] to category [root].
+log4j: Class name: [org.apache.log4j.RollingFileAppender]
+log4j: Setting property [append] to [false].
+log4j: Setting property [maxFileSize] to [10MB].
+log4j: Setting property [maxBackupIndex] to [5].
+log4j: Setting property [threshold] to [WARN].
+log4j: Setting property [file] to [logs/warning-api.xml].
+log4j: Parsing layout of class: &quot;org.apache.log4j.PatternLayout&quot;
+log4j: Setting property [conversionPattern] to [%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n].
+log4j: Setting property [levelMin] to [WARN].
+log4j: Setting property [levelMax] to [WARN].
+log4j: Setting property [acceptOnMatch] to [true].
+log4j: Adding filter of type [class org.apache.log4j.varia.LevelRangeFilter] to appender named [warningfile].
+log4j: setFile called: logs/warning-api.xml, false
+log4j: setFile ended
+log4j: Adding appender named [warningfile] to category [root].
+log4j: Class name: [org.apache.log4j.RollingFileAppender]
+log4j: Setting property [append] to [false].
+log4j: Setting property [maxFileSize] to [10MB].
+log4j: Setting property [maxBackupIndex] to [5].
+log4j: Setting property [threshold] to [DEBUG].
+log4j: Setting property [file] to [logs/debug-api.xml].
+log4j: Parsing layout of class: &quot;org.apache.log4j.PatternLayout&quot;
+log4j: Setting property [conversionPattern] to [%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n].
+log4j: Setting property [levelMin] to [DEBUG].
+log4j: Setting property [levelMax] to [DEBUG].
+log4j: Setting property [acceptOnMatch] to [true].
+log4j: Adding filter of type [class org.apache.log4j.varia.LevelRangeFilter] to appender named [debugfile].
+log4j: setFile called: logs/debug-api.xml, false
+log4j: setFile ended
+log4j: Adding appender named [debugfile] to category [root].
+log4j: Class name: [org.apache.log4j.ConsoleAppender]
+log4j: Setting property [threshold] to [INFO].
+log4j: Setting property [levelMin] to [INFO].
+log4j: Setting property [levelMax] to [INFO].
+log4j: Setting property [acceptOnMatch] to [true].
+log4j: Adding filter of type [class org.apache.log4j.varia.LevelRangeFilter] to appender named [console].
+log4j: Parsing layout of class: &quot;org.apache.log4j.PatternLayout&quot;
+log4j: Setting property [conversionPattern] to [%d [%t] %-5p %c - %m%n].
+log4j: Adding appender named [console] to category [root].
+2017-03-20 12:44:42,718 [Test worker] INFO  com.sikayetvar.sitemap.generator.Configuration - Config file &lt;engine.properties&gt; not found
+2017-03-20 12:44:42,721 [Test worker] INFO  com.sikayetvar.sitemap.generator.Configuration - Falling back to default hardcoded values.
+2017-03-20 12:44:43,337 [Test worker] INFO  com.sikayetvar.sitemap.generator.dao.MySQLDataOperator - Corpus Loaded!
+2017-03-20 12:44:43,389 [Test worker] INFO  com.sikayetvar.sitemap.generator.dao.MySQLDataOperator - Companies Loaded!
+2017-03-20 12:44:54,215 [Test worker] INFO  com.sikayetvar.sitemap.generator.dao.MySQLDataOperator - Complaints Loaded!
+2017-03-20 12:44:54,216 [Test worker] INFO  com.sikayetvar.sitemap.generator.Controller - 3 will be processed in this chunk! 
+I'm starting!
+I'm starting!
+I'm starting!
+I'm done! 48
+I'm done! 59
+I'm done! 59
+2017-03-20 12:44:54,243 [Test worker] INFO  com.sikayetvar.sitemap.generator.Controller - Processor returned! 
+2017-03-20 12:44:54,243 [Test worker] INFO  com.sikayetvar.sitemap.generator.Controller - Test started! 
+</pre>
+</span>
+</div>
+<div id="tab2" class="tab">
+<h2>Standard error</h2>
+<span class="code">
+<pre>log4j:WARN Continuable parsing error 62 and column 16
+log4j:WARN The content of element type &quot;appender&quot; must match &quot;(errorHandler?,param*,rollingPolicy?,triggeringPolicy?,connectionSource?,layout?,filter*,appender-ref*)&quot;.
+log4j:WARN No such property [append] in org.apache.log4j.ConsoleAppender.
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 3.1</a> at Mar 20, 2017 12:44:59 PM</p>
+</div>
+</div>
+</body>
+</html>
