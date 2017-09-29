@@ -25,6 +25,8 @@ import com.ecyrd.speed4j.StopWatch;
 public class Controller {
 
     public List<ComplaintHashtag> complaint_hashtags_list = new ArrayList<ComplaintHashtag>();
+    public List<ComplaintHashtag> all_complaint_hashtags_list = new ArrayList<ComplaintHashtag>();
+
 
     private ConcurrentHashMap<String,URLMeta> companyHashtagURLs = new ConcurrentHashMap<String,URLMeta>();
     private ConcurrentHashMap<String,Date> companyURLs = new ConcurrentHashMap<String,Date>();
@@ -50,14 +52,21 @@ public class Controller {
 
         controller.writeComplaintURLs();
 
+        controller.all_complaint_hashtags_list = MySQLDataOperator.getInstance().getComplaintHashtags();
+
         int chunkIndex=0;
+        int fromIndex=0;
+        int toIndex=Configuration.COMPLAINT_HASHTAGS_CHUNK_SIZE;
         do{
-            controller.complaint_hashtags_list = MySQLDataOperator.getInstance().getComplaintHashtags(Configuration.COMPLAINT_HASHTAGS_CHUNK_SIZE, Configuration.COMPLAINT_HASHTAGS_CHUNK_SIZE * chunkIndex);
+            if (toIndex > controller.all_complaint_hashtags_list.size())
+                toIndex = controller.all_complaint_hashtags_list.size();
+            controller.complaint_hashtags_list = controller.all_complaint_hashtags_list.subList(fromIndex,toIndex);
             logger.info(controller.complaint_hashtags_list.size() + " Complaints Loaded!");
             controller.processChunk();
-            logger.info("Processor returned! ");
             chunkIndex++;
-        }while (controller.complaint_hashtags_list.size()!=0);
+            fromIndex = chunkIndex * Configuration.COMPLAINT_HASHTAGS_CHUNK_SIZE + 1;
+            toIndex = (chunkIndex+1) * Configuration.COMPLAINT_HASHTAGS_CHUNK_SIZE;
+        }while (fromIndex < controller.all_complaint_hashtags_list.size());
 
         logger.info("companyHashtagURLs Calculated!");
 
@@ -68,7 +77,7 @@ public class Controller {
     }
 
     public void processChunk(){
-        logger.info(complaint_hashtags_list.size() + " will be processed in this chunk! ");
+        //logger.info(complaint_hashtags_list.size() + " will be processed in this chunk! ");
         int size = complaint_hashtags_list.size() / Configuration.NUMBER_OF_THREADS + 1;
         List<List<ComplaintHashtag>> partitions = Lists.partition(complaint_hashtags_list, size);
 
@@ -89,13 +98,13 @@ public class Controller {
 
     private void executor(List<ComplaintHashtag> complaint_hashtags_list){
         int i =0;
-        System.out.println("I'm starting!");
+        //System.out.println("I'm starting!");
         for (ComplaintHashtag complaint:complaint_hashtags_list) {
 
             Date publish_time = complaint.getPublish_time();
             if (complaint.isMalformed()) continue;
-            Set<Set<String>> allCombinations = complaint.getCombinations();
-            for (Set<String> combination:allCombinations) {
+            // foreach hashtag combination of a complaint
+            for (Set<String> combination:complaint.getCombinations()) {
                 if(combination.isEmpty()) continue;
                 // brand + hashtag1 + hashtag2 .....
                 enrichCompanyHashtagURLs(complaint.getCompany() + "/" + combination.stream().collect(Collectors.joining("/")) , publish_time);
@@ -111,22 +120,25 @@ public class Controller {
                 i = 0;
             }
         }
-        System.out.println("I'm done! " + companyHashtagURLs.size());
+        //System.out.println("I'm done! " + companyHashtagURLs.size());
     }
 
     private void enrichCompanyHashtagURLs(String url, Date publish_time){
 
         int count = 0;
+        Date mostUpToDate = publish_time;
         try {
             if(companyHashtagURLs.containsKey(url)){
-                if(companyHashtagURLs.get(url).getMostUpToDate().after(publish_time))    return;
+                if(companyHashtagURLs.get(url).getMostUpToDate().after(publish_time))
+                    mostUpToDate = companyHashtagURLs.get(url).getMostUpToDate();
                 count = companyHashtagURLs.get(url).getCount();
             }
+
         } catch (Exception e) {
             logger.error("Problem when getting companyHashtagUrl! URL: "+ url ,e);
         }
         try {
-            companyHashtagURLs.put(url, new URLMeta(publish_time,++count));
+            companyHashtagURLs.put(url, new URLMeta(mostUpToDate,++count));
         } catch (Exception e) {
             logger.error("new node could not be added! URL: "+ url,e);
         }
@@ -150,10 +162,14 @@ public class Controller {
 
     private void writeComplaintURLs(){
         HashMap<Integer,Complaint> complaints = MySQLDataOperator.getInstance().complaints;
-        complaints.forEach((id,complaint) -> complaintURLs.put(complaint.getUrl(),complaint.getUpdate_time()));
+        complaints.forEach((id,complaint)
+                -> {
+            if (complaint.getLen() > 200 && complaint.getSilindi() != 1)
+                complaintURLs.put(complaint.getUrl(),complaint.getUpdate_time());
+        });
         try {
 
-            Utils.getInstance().writeToFile(complaintURLs,Configuration.FILENAME_SITEMAP_COMPLAINTS);
+            Utils.getInstance().writeToFile(complaintURLs,Configuration.FILENAME_SITEMAP_COMPLAINTS, false);
 
         } catch (FileNotFoundException e) {
             logger.error("Controller.Main FileNotFoundException during writing into file",e);
@@ -165,6 +181,7 @@ public class Controller {
 
     public void writeCompanyHashtagURLs(){
         try {
+            logger.info("Total CompanyHashtagUrl: " + companyHashtagURLs.size());
 
             Utils.getInstance().writeToFile(companyHashtagURLs,Configuration.FILENAME_SITEMAP_COMPANIES_HASHTAGS,true);
 
@@ -179,7 +196,7 @@ public class Controller {
     public void writeCompanyURLs(){
         try {
 
-            Utils.getInstance().writeToFile(companyURLs,Configuration.FILENAME_SITEMAP_COMPANIES);
+            Utils.getInstance().writeToFile(companyURLs,Configuration.FILENAME_SITEMAP_COMPANIES,true);
 
         } catch (FileNotFoundException e) {
             logger.error("Controller.Main FileNotFoundException during writing into file",e);

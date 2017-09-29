@@ -65,6 +65,7 @@ public class ComplaintHashtag {
     public Set<Set<String>> getCombinations(){
         Set<Set<String>> allCombinations = new HashSet<Set<String>>();
 
+        // define a sorted set of hashtags for that complaint
         SortedSet<String> biggestSet = new TreeSet<String>();
 
         for (String hashtag:hashtags) {

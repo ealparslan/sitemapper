@@ -92,7 +92,8 @@ public class MySQLDataOperator {
             while (resultSet.next()){
                 complaintId = resultSet.getInt(1);
                 try {
-                    complaints.put(complaintId,new Complaint(complaintId,resultSet.getTimestamp(2),resultSet.getInt(3),resultSet.getString(4)));
+                    complaints.put(complaintId,new Complaint(complaintId,resultSet.getTimestamp(2),resultSet.getInt(3),
+                                                                resultSet.getString(4),resultSet.getInt(5),resultSet.getInt(6)));
                 } catch (SQLException e) {
                     logger.error("Exception in MySQLDAO.getComplaints! The most possible reason is Update_Time = 0000-00-00 00:00:00  / ComplaintId: " + complaintId,e);
                 }
@@ -123,16 +124,17 @@ public class MySQLDataOperator {
     }
 
 
-    public List<ComplaintHashtag> getComplaintHashtags(int limit, int offset){
+
+    public List<ComplaintHashtag> getComplaintHashtags(){
 
         try {
 
             complaint_hashtags_list = new ArrayList<>();
-
-            if(Configuration.DEBUG && (limit+offset) > Configuration.DEBUG_COMPLAINT_HASHTAGS_SAMPLE_SIZE)
-                limit = Configuration.DEBUG_COMPLAINT_HASHTAGS_SAMPLE_SIZE - offset;
-
-            statement = connect.prepareStatement(Configuration.SQL_GET_COMPLAINTHASHTAGS + " limit " + limit + " offset " + offset);
+            logger.info("Getting hashtag complaints!");
+            if(Configuration.DEBUG)
+                statement = connect.prepareStatement(Configuration.SQL_GET_COMPLAINTHASHTAGS + " limit " + Configuration.DEBUG_COMPLAINT_HASHTAGS_SAMPLE_SIZE);
+            else
+                statement = connect.prepareStatement(Configuration.SQL_GET_COMPLAINTHASHTAGS );
 
             resultSet = statement.executeQuery();
 
@@ -143,7 +145,7 @@ public class MySQLDataOperator {
                 int hashtag = resultSet.getInt(2);
                 processComplaintHashtags(on_complaint,hashtag);
             }
-
+            logger.info("Done!");
         }
         catch (Exception e){
             logger.error("Exception in MySQLDAO.getComplaintHashtags",e);

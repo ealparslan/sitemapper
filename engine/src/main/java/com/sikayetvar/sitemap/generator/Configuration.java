@@ -24,12 +24,12 @@ public class Configuration {
      * When DEBUG flag is set to true, this many records are read from database
      * This is the number of records from SQL_GET_COMPLAINTHASHTAGS
      */
-    public static int DEBUG_COMPLAINT_HASHTAGS_SAMPLE_SIZE = 100000;
+    public static int DEBUG_COMPLAINT_HASHTAGS_SAMPLE_SIZE = 10000000;
 
     /**
      * In production due to the ram considerations we are processing in batches
      */
-    public static int COMPLAINT_HASHTAGS_CHUNK_SIZE = 1000;
+    public static int COMPLAINT_HASHTAGS_CHUNK_SIZE = 100000;
 
     /**
      * When to insert log record while saving entities to database
@@ -54,7 +54,7 @@ public class Configuration {
     /**
      * URL min complaint threshold
      */
-    public static int MIN_NUMBER_OF_COMPLAINTS_ON_URL = 2;
+    public static int MIN_NUMBER_OF_COMPLAINTS_ON_URL = 4;
 
 
     /**
@@ -79,6 +79,26 @@ public class Configuration {
     public static String DATABASE_PASSWORD = "3BY98DJnmtfpZgzmusT3";
 
     /**
+     * Redis host URL for complaint detail set
+     */
+    public static String REDIS_COMPLAINT_DETAIL_HOST = "luna.sikayetvar.com";
+
+    /**
+     * Redis port for complaint detail set
+     */
+    public static int REDIS_COMPLAINT_DETAIL_PORT = 6382;
+
+    /**
+     * Database username to connect to database
+     */
+    public static String REDIS_COMPLAINT_DETAIL_HOST_USERNAME = "";
+
+    /**
+     * Database password to connect to database
+     */
+    public static String REDIS_COMPLAINT_DETAIL_HOST_PASSWORD = "";
+
+    /**
      * GetCorpus SQL
      */
     public static String SQL_GET_CORPUS = "select id,term from textmining.corpus";
@@ -89,14 +109,14 @@ public class Configuration {
     public static String SQL_GET_COMPANIES = "select id,name from textmining.__sitemap_companies";
 
     /**
-     * GetCompanies SQL
+     * GetComplaints SQL
      */
-    public static String SQL_GET_COMPLAINTS = "select complaint_id,update_time,complaint_company_id,url from textmining.__sitemap_complaints";
+    public static String SQL_GET_COMPLAINTS = "select complaint_id,update_time,complaint_company_id,url,len,silindi from textmining.__sitemap_complaints";
 
     /**
-     * GetCompanies SQL
+     * GetComplainthashtags SQL
      */
-    public static String SQL_GET_COMPLAINTHASHTAGS = "select complaint_id,hashtag_id from textmining.__sitemap_complaint_hashtags";
+    public static String SQL_GET_COMPLAINTHASHTAGS = "select complaint_id,hashtag_id from textmining.__sitemap_complaint_hashtags where complaint_id in (select complaint_id from textmining.__sitemap_complaints)";
 
     /**
      * Filename sitemapindex-home
@@ -117,6 +137,11 @@ public class Configuration {
      * Filename sitemapindex-companies-hashtags
      */
     public static String FILENAME_SITEMAP_COMPANIES_HASHTAGS = "sitemapindex-companies-hashtags";
+
+    /**
+     * Sitemap version
+     */
+    public static String SITEMAP_VERSION = "v2";
 
     static {
         Configurations configs = new Configurations();
@@ -146,6 +171,7 @@ public class Configuration {
                 FILENAME_SITEMAP_COMPLAINTS = config.getString("engine.fileNameSitemapComplaints", FILENAME_SITEMAP_COMPLAINTS);
                 FILENAME_SITEMAP_COMPANIES = config.getString("engine.fileNameSitemapCompanies", FILENAME_SITEMAP_COMPANIES);
                 FILENAME_SITEMAP_COMPANIES_HASHTAGS = config.getString("engine.fileNameSitemapCompaniesHashtags", FILENAME_SITEMAP_COMPANIES_HASHTAGS);
+                SITEMAP_VERSION = config.getString("engine.sitemapVersion", SITEMAP_VERSION);
 
             } else {
                 logger.info("Config file <" + configFile.getName() + "> not found");
