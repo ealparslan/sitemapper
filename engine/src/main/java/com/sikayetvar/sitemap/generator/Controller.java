@@ -37,6 +37,7 @@ public class Controller {
     private int index;
     private static final Logger logger = LoggerFactory.getLogger(Controller.class);
 
+    private static SlackSender slackSender = new SlackSender(Configuration.SLACK_SERVICE_ERRORS_URL);
 
     public static void main(String[] args) {
 
@@ -73,6 +74,10 @@ public class Controller {
         controller.writeCompanyHashtagURLs();
         controller.writeCompanyURLs();
         logger.info(sw.toString());
+
+        if(Configuration.NOTIFY_THE_END)
+            slackSender.send("Tamam tamam bugunu de hallettik!!! Bikac gun bu uyariyi yollayacam");
+
         Utils.getInstance().disposeInstance();
     }
 

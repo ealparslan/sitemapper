@@ -106,17 +106,17 @@ public class Configuration {
     /**
      * GetCompanies SQL
      */
-    public static String SQL_GET_COMPANIES = "select id,name from textmining.__sitemap_companies";
+    public static String SQL_GET_COMPANIES = "select id,name from textmining.v_sitemap_companies";
 
     /**
      * GetComplaints SQL
      */
-    public static String SQL_GET_COMPLAINTS = "select complaint_id,update_time,complaint_company_id,url,len,silindi from textmining.__sitemap_complaints";
+    public static String SQL_GET_COMPLAINTS = "select complaint_id,update_time,complaint_company_id,url,len,silindi from textmining.v_sitemap_complaints";
 
     /**
      * GetComplainthashtags SQL
      */
-    public static String SQL_GET_COMPLAINTHASHTAGS = "select complaint_id,hashtag_id from textmining.__sitemap_complaint_hashtags where complaint_id in (select complaint_id from textmining.__sitemap_complaints)";
+    public static String SQL_GET_COMPLAINTHASHTAGS = "select complaint_id,hashtag_id from textmining.v_sitemap_complaint_hashtags";
 
     /**
      * Filename sitemapindex-home
@@ -142,6 +142,13 @@ public class Configuration {
      * Sitemap version
      */
     public static String SITEMAP_VERSION = "v2";
+
+    /**
+     * Slack sv chanel
+     */
+    public static String SLACK_SERVICE_ERRORS_URL = "https://hooks.slack.com/services/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";
+
+    public static boolean NOTIFY_THE_END = true;
 
     static {
         Configurations configs = new Configurations();
@@ -172,6 +179,9 @@ public class Configuration {
                 FILENAME_SITEMAP_COMPANIES = config.getString("engine.fileNameSitemapCompanies", FILENAME_SITEMAP_COMPANIES);
                 FILENAME_SITEMAP_COMPANIES_HASHTAGS = config.getString("engine.fileNameSitemapCompaniesHashtags", FILENAME_SITEMAP_COMPANIES_HASHTAGS);
                 SITEMAP_VERSION = config.getString("engine.sitemapVersion", SITEMAP_VERSION);
+                SLACK_SERVICE_ERRORS_URL = config.getString("engine.slackServiceURL", SLACK_SERVICE_ERRORS_URL);
+                NOTIFY_THE_END = config.getBoolean("engine.notifyTheEnd", NOTIFY_THE_END);
+
 
             } else {
                 logger.info("Config file <" + configFile.getName() + "> not found");

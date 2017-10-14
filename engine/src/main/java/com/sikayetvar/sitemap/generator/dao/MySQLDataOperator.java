@@ -142,6 +142,7 @@ public class MySQLDataOperator {
 
             while (resultSet.next()){
                 int on_complaint = resultSet.getInt(1);
+                if(!complaints.containsKey(on_complaint)) continue;
                 int hashtag = resultSet.getInt(2);
                 processComplaintHashtags(on_complaint,hashtag);
             }

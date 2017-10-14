@@ -22,12 +22,13 @@ public class Utils {
     private static Utils instance = null;
     private static final Pattern NONLATIN = Pattern.compile("[^\\w-]");
     private static final Pattern WHITESPACE = Pattern.compile("[\\s]");
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
     Writer companyMapIndexWriter;
     Writer complaintMapIndexWriter;
     Writer hashtagMapIndexWriter;
 
+    SlackSender slackSender = new SlackSender(Configuration.SLACK_SERVICE_ERRORS_URL);
 
     protected Utils() {
         try {
@@ -129,6 +130,11 @@ public class Utils {
     }
 
     public void writeToFile(ConcurrentHashMap<String,URLMeta> keyUrls, String fileName, boolean checkComplaintCountThreshold) throws FileNotFoundException, UnsupportedEncodingException{
+
+        if(null == keyUrls || keyUrls.size() == 0){
+            slackSender.send("Sitemap e yazacak URL yok elimde!!!");
+        }
+
         Writer writer = null;
         try {
             writer =  new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream("sitemap/" + fileName +  Configuration.SITEMAP_VERSION  + "-1.xml.gz")), "UTF-8"));
@@ -175,6 +181,11 @@ public class Utils {
         logger.info("Total :" + sum);
     }
     public void writeToFile(Map<String,Date> keyUrls, String fileName, boolean isforCompanySitemap) throws FileNotFoundException, UnsupportedEncodingException{
+
+        if(null == keyUrls || keyUrls.size() == 0){
+            slackSender.send("Sitemap e yazacak URL yok elimde!!!");
+        }
+
         Writer writer = null;
         try {
             writer =  new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream("sitemap/" + fileName +  Configuration.SITEMAP_VERSION  + "-1.xml.gz")), "UTF-8"));
