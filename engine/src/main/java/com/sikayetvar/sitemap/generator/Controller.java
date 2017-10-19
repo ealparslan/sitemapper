@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.Map.Entry;
 import com.google.common.collect.Lists;
 import java.io.*;
 import java.util.stream.Collectors;
@@ -17,6 +18,8 @@ import com.sikayetvar.sitemap.generator.entity.URLMeta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ecyrd.speed4j.StopWatch;
+
+import javax.rmi.CORBA.Util;
 
 
 /**
@@ -30,6 +33,7 @@ public class Controller {
 
     private ConcurrentHashMap<String,URLMeta> companyHashtagURLs = new ConcurrentHashMap<String,URLMeta>();
     private ConcurrentHashMap<String,Date> companyURLs = new ConcurrentHashMap<String,Date>();
+    private SortedMap<String,Date> topNCompanyURLs = new TreeMap<>();
 
     public ConcurrentHashMap<String, URLMeta> getCompanyHashtagURLs() {return companyHashtagURLs;}
 
@@ -71,6 +75,7 @@ public class Controller {
 
         logger.info("companyHashtagURLs Calculated!");
 
+        controller.writeTopNCompanyURLs();
         controller.writeCompanyHashtagURLs();
         controller.writeCompanyURLs();
         logger.info(sw.toString());
@@ -107,16 +112,25 @@ public class Controller {
         for (ComplaintHashtag complaint:complaint_hashtags_list) {
 
             Date publish_time = complaint.getPublish_time();
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.YEAR, -1);
+
+            Date update_time = complaint.getUpdate_time();
+
             if (complaint.isMalformed()) continue;
+
+            // brand
+            enrichCompanyURLs(complaint.getCompany(), update_time);
+
+            if(publish_time.before(cal.getTime())) continue; // company hastags and hashtags url is not affedcted with prior than 1 year complaints
+
             // foreach hashtag combination of a complaint
             for (Set<String> combination:complaint.getCombinations()) {
                 if(combination.isEmpty()) continue;
                 // brand + hashtag1 + hashtag2 .....
-                enrichCompanyHashtagURLs(complaint.getCompany() + "/" + combination.stream().collect(Collectors.joining("/")) , publish_time);
+                enrichCompanyHashtagURLs(complaint.getCompany() + "/" + combination.stream().collect(Collectors.joining("/")) , update_time);
                 // hashtag1 + hashtag2 .....
-                enrichCompanyHashtagURLs(combination.stream().collect(Collectors.joining("/")) , publish_time);
-                // brand
-                enrichCompanyURLs(complaint.getCompany(), publish_time);
+                enrichCompanyHashtagURLs(combination.stream().collect(Collectors.joining("/")) , update_time);
             }
 
             if(i++ > Configuration.NOTIFY_ROW_SIZE) {
@@ -128,13 +142,15 @@ public class Controller {
         //System.out.println("I'm done! " + companyHashtagURLs.size());
     }
 
-    private void enrichCompanyHashtagURLs(String url, Date publish_time){
+
+    private void enrichCompanyHashtagURLs(String url, Date update_time){
+
 
         int count = 0;
-        Date mostUpToDate = publish_time;
+        Date mostUpToDate = update_time;
         try {
             if(companyHashtagURLs.containsKey(url)){
-                if(companyHashtagURLs.get(url).getMostUpToDate().after(publish_time))
+                if(companyHashtagURLs.get(url).getMostUpToDate().after(update_time))
                     mostUpToDate = companyHashtagURLs.get(url).getMostUpToDate();
                 count = companyHashtagURLs.get(url).getCount();
             }
@@ -174,7 +190,7 @@ public class Controller {
         });
         try {
 
-            Utils.getInstance().writeToFile(complaintURLs,Configuration.FILENAME_SITEMAP_COMPLAINTS, false);
+            Utils.getInstance().writeToFile(complaintURLs,Configuration.FILENAME_SITEMAP_COMPLAINTS, "complaint");
 
         } catch (FileNotFoundException e) {
             logger.error("Controller.Main FileNotFoundException during writing into file",e);
@@ -201,7 +217,20 @@ public class Controller {
     public void writeCompanyURLs(){
         try {
 
-            Utils.getInstance().writeToFile(companyURLs,Configuration.FILENAME_SITEMAP_COMPANIES,true);
+            Utils.getInstance().writeToFile(companyURLs,Configuration.FILENAME_SITEMAP_COMPANIES,"company");
+
+        } catch (FileNotFoundException e) {
+            logger.error("Controller.Main FileNotFoundException during writing into file",e);
+        } catch (UnsupportedEncodingException e) {
+            logger.error("Controller.Main UnsupportedEncodingException during writing into file",e);
+        }
+        logger.info("companyURLs written!");
+    }
+
+    public void writeTopNCompanyURLs(){
+        try {
+            topNCompanyURLs = Utils.getInstance().putFirstEntries(Configuration.TOP_N_UPTODATE_COMPANIES, Utils.getInstance().sortHashMap(companyURLs));
+            Utils.getInstance().writeToFile(topNCompanyURLs,Configuration.FILENAME_SITEMAP_TOPNCOMPANIES,"topN");
 
         } catch (FileNotFoundException e) {
             logger.error("Controller.Main FileNotFoundException during writing into file",e);

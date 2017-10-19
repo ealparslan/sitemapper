@@ -5,12 +5,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.security.Key;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 import java.sql.Timestamp;
 
@@ -25,6 +27,7 @@ public class Utils {
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
     Writer companyMapIndexWriter;
+    Writer topNCompanyMapIndexWriter;
     Writer complaintMapIndexWriter;
     Writer hashtagMapIndexWriter;
 
@@ -32,11 +35,13 @@ public class Utils {
 
     protected Utils() {
         try {
-            companyMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/sitemapindex-company-"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
+            companyMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/company"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
             companyMapIndexWriter.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
-            complaintMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/sitemapindex-complaint-"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
+            topNCompanyMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/topNcompany"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
+            topNCompanyMapIndexWriter.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
+            complaintMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/complaint"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
             complaintMapIndexWriter.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
-            hashtagMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/sitemapindex-hashtag-"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
+            hashtagMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/hashtag"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
             hashtagMapIndexWriter.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -59,6 +64,8 @@ public class Utils {
         try {
             companyMapIndexWriter.write("</sitemapindex>");
             companyMapIndexWriter.close();
+            topNCompanyMapIndexWriter.write("</sitemapindex>");
+            topNCompanyMapIndexWriter.close();
             complaintMapIndexWriter.write("</sitemapindex>");
             complaintMapIndexWriter.close();
             hashtagMapIndexWriter.write("</sitemapindex>");
@@ -88,21 +95,41 @@ public class Utils {
 
     public String toSlug(String input) {
         try {
-            String nowhitespace = WHITESPACE.matcher(input.toLowerCase(Locale.ENGLISH)).replaceAll("-");
+            String nowhitespace = WHITESPACE.matcher(input.trim().toLowerCase(Locale.ENGLISH)).replaceAll("-");
             String normalized = Normalizer.normalize(nowhitespace, Normalizer.Form.NFD);
             String preprocessed = normalized.replace('ı','i');
-            String slug = NONLATIN.matcher(preprocessed).replaceAll("")
-                    .replace('_','-')
-                    .replace("--","-")
-                    .replaceAll("[^a-z0-9\\-<>]","")
-                    .replaceAll("[\\-]+","-")
-                    .replaceAll("<[^>]*>","");
 
+            String replaced = preprocessed
+                                            .replace('_','-')
+                                            .replace("--","-")
+                                            .replaceAll("[^a-z0-9\\-<>&]","")
+                                            .replaceAll("[\\-&<>]+","-");                                            //.replaceAll("<[^>]*>","-");
+
+            String slug = NONLATIN.matcher(replaced).replaceAll("");
+            //String slug = replaced.replaceAll("[^\\w-]","");
             return slug;
         } catch (Exception e) {
             logger.error("Error in toSlug. input = /" + input + "/",e);
             return input;
         }
+    }
+
+    public SortedMap<String,Date> sortHashMap(Map<String,Date> unsorted){
+        TreeMap sorted = new TreeMap();
+        sorted.putAll(unsorted);
+        return sorted;
+    }
+
+    public SortedMap<String,Date>  putFirstEntries(int max, SortedMap<String,Date> source) {
+        int count = 0;
+        TreeMap<String,Date> target = new TreeMap<>();
+        for (Map.Entry<String,Date> entry:source.entrySet()) {
+            if (count >= max) break;
+
+            target.put(entry.getKey(), entry.getValue());
+            count++;
+        }
+        return target;
     }
 
     public Set<Set<String>> powerSet(Set<String> originalSet) {
@@ -153,7 +180,7 @@ public class Utils {
                 try {
                     writer.append("</urlset>");
                     writer.close();
-                    hashtagMapIndexWriter.write("<sitemap><loc>https://www.sikayetvar.com/" + fileName +  Configuration.SITEMAP_VERSION  + "-" + fileIndex + ".xml.gz" + "</loc><lastmod>" +  dateFormat.format(new Timestamp(System.currentTimeMillis())) + "\n"+ "</lastmod></sitemap>");
+                    hashtagMapIndexWriter.write("<sitemap><loc>" + Configuration.SITEMAP_URL + fileName +  Configuration.SITEMAP_VERSION  + "-" + fileIndex + ".xml.gz" + "</loc><lastmod>" +  dateFormat.format(new Timestamp(System.currentTimeMillis())) + "\n"+ "</lastmod></sitemap>");
                 } catch (IOException e) {
                     logger.error("Could not close file!",e);
                 }
@@ -174,13 +201,13 @@ public class Utils {
         try {
             writer.append("</urlset>");
             writer.close();
-            hashtagMapIndexWriter.write("<sitemap><loc>https://www.sikayetvar.com/" + fileName +  Configuration.SITEMAP_VERSION  + "-" + fileIndex + ".xml.gz" + "</loc><lastmod>" +  dateFormat.format(new Timestamp(System.currentTimeMillis()))+ "\n"+ "</lastmod></sitemap>");
+            hashtagMapIndexWriter.write("<sitemap><loc>" + Configuration.SITEMAP_URL + fileName +  Configuration.SITEMAP_VERSION  + "-" + fileIndex + ".xml.gz" + "</loc><lastmod>" +  dateFormat.format(new Timestamp(System.currentTimeMillis()))+ "\n"+ "</lastmod></sitemap>");
         } catch (IOException e) {
             logger.error("Could not close file!",e);
         }
         logger.info("Total :" + sum);
     }
-    public void writeToFile(Map<String,Date> keyUrls, String fileName, boolean isforCompanySitemap) throws FileNotFoundException, UnsupportedEncodingException{
+    public void writeToFile(Map<String,Date> keyUrls, String fileName, String whichSitemap) throws FileNotFoundException, UnsupportedEncodingException{
 
         if(null == keyUrls || keyUrls.size() == 0){
             slackSender.send("Sitemap e yazacak URL yok elimde!!!");
@@ -201,11 +228,15 @@ public class Utils {
                 try {
                     writer.append("</urlset>");
                     writer.close();
-                    String writeMainSitemapIndex = "<sitemap><loc>https://www.sikayetvar.com/" + fileName +  Configuration.SITEMAP_VERSION  + "-" + fileIndex + ".xml.gz" + "</loc><lastmod>" +  dateFormat.format(new Timestamp(System.currentTimeMillis()))+ "\n"+ "</lastmod></sitemap>";
-                    if (isforCompanySitemap)
+                    String writeMainSitemapIndex = "<sitemap><loc>" + Configuration.SITEMAP_URL + fileName +  Configuration.SITEMAP_VERSION  + "-" + fileIndex + ".xml.gz" + "</loc><lastmod>" +  dateFormat.format(new Timestamp(System.currentTimeMillis()))+ "\n"+ "</lastmod></sitemap>";
+                    if (whichSitemap.equals("company"))
                         companyMapIndexWriter.write(writeMainSitemapIndex);
-                    else
+                    else if (whichSitemap.equals("complaint"))
                         complaintMapIndexWriter.write(writeMainSitemapIndex);
+                    else if (whichSitemap.equals("topN"))
+                        topNCompanyMapIndexWriter.write(writeMainSitemapIndex);
+                    else
+                        logger.error("Sitemap type is not selected! ");
                 } catch (IOException e) {
                     logger.error("Could not close file!",e);
                 }
@@ -227,11 +258,15 @@ public class Utils {
         try {
             writer.append("</urlset>");
             writer.close();
-            String writeMainSitemapIndex ="<sitemap><loc>https://www.sikayetvar.com/" + fileName +  Configuration.SITEMAP_VERSION  + "-" + fileIndex + ".xml.gz" + "</loc><lastmod>" +  dateFormat.format(new Timestamp(System.currentTimeMillis()))+ "\n"+ "</lastmod></sitemap>";
-            if (isforCompanySitemap)
+            String writeMainSitemapIndex ="<sitemap><loc>" + Configuration.SITEMAP_URL + fileName +  Configuration.SITEMAP_VERSION  + "-" + fileIndex + ".xml.gz" + "</loc><lastmod>" +  dateFormat.format(new Timestamp(System.currentTimeMillis()))+ "\n"+ "</lastmod></sitemap>";
+            if (whichSitemap.equals("company"))
                 companyMapIndexWriter.write(writeMainSitemapIndex);
-            else
+            else if (whichSitemap.equals("complaint"))
                 complaintMapIndexWriter.write(writeMainSitemapIndex);
+            else if (whichSitemap.equals("topN"))
+                topNCompanyMapIndexWriter.write(writeMainSitemapIndex);
+            else
+                logger.error("Sitemap type is not selected! ");
         } catch (IOException e) {
             logger.error("Could not close file!",e);
         }

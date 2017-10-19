@@ -15,6 +15,7 @@ public class ComplaintHashtag {
     private int complaint_id;
     private List<String> hashtags;
     private Date publish_time;
+    private Date update_time;
     private String company;
     private static final Logger logger = LoggerFactory.getLogger(ComplaintHashtag.class);
 
@@ -57,8 +58,16 @@ public class ComplaintHashtag {
         return publish_time;
     }
 
+    public Date getUpdate_time() {
+        return update_time;
+    }
+
     public void setPublish_time(Date publish_time) {
         this.publish_time = publish_time;
+    }
+
+    public void setUpdate_time(Date update_time) {
+        this.update_time = update_time;
     }
 
 

@@ -92,8 +92,8 @@ public class MySQLDataOperator {
             while (resultSet.next()){
                 complaintId = resultSet.getInt(1);
                 try {
-                    complaints.put(complaintId,new Complaint(complaintId,resultSet.getTimestamp(2),resultSet.getInt(3),
-                                                                resultSet.getString(4),resultSet.getInt(5),resultSet.getInt(6)));
+                    complaints.put(complaintId,new Complaint(complaintId,resultSet.getTimestamp(2),resultSet.getTimestamp(3),resultSet.getInt(4),
+                                                                resultSet.getString(5),resultSet.getInt(6),resultSet.getInt(7)));
                 } catch (SQLException e) {
                     logger.error("Exception in MySQLDAO.getComplaints! The most possible reason is Update_Time = 0000-00-00 00:00:00  / ComplaintId: " + complaintId,e);
                 }
@@ -171,7 +171,8 @@ public class MySQLDataOperator {
                 logger.error("Exception in MySQLDAO.getComplaintHashtags:  Complaint or Company not found. on_complaint " + on_complaint ,e);
             }
             try {
-                complaintHashtag.setPublish_time(complaints.get(on_complaint).getUpdate_time());
+                complaintHashtag.setPublish_time(complaints.get(on_complaint).getSikayet_time());
+                complaintHashtag.setUpdate_time(complaints.get(on_complaint).getUpdate_time());
             } catch (Exception e) {
                 logger.error("Exception in MySQLDAO.getComplaintHashtags:  Complaint or Update Time not found. on_complaint " + on_complaint,e);
             }

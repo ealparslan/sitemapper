@@ -56,6 +56,10 @@ public class Configuration {
      */
     public static int MIN_NUMBER_OF_COMPLAINTS_ON_URL = 4;
 
+    /**
+     * N Top Uptodate Companies
+     */
+    public static int TOP_N_UPTODATE_COMPANIES = 1000;
 
     /**
      * Database to be used for data access. Default to "MYSQL"
@@ -119,29 +123,40 @@ public class Configuration {
     public static String SQL_GET_COMPLAINTHASHTAGS = "select complaint_id,hashtag_id from textmining.v_sitemap_complaint_hashtags";
 
     /**
-     * Filename sitemapindex-home
+     * Filename -home
      */
-    public static String FILENAME_SITEMAP_INDEX_HOME = "sitemapindex-home";
+    public static String FILENAME_SITEMAP_INDEX_HOME = "home";
 
     /**
-     * Filename sitemapindex-complaints
+     * Filename -complaints
      */
-    public static String FILENAME_SITEMAP_COMPLAINTS = "sitemapindex-complaints";
+    public static String FILENAME_SITEMAP_COMPLAINTS = "complaints";
 
     /**
-     * Filename sitemapindex-companies
+     * Filename -companies
      */
-    public static String FILENAME_SITEMAP_COMPANIES = "sitemapindex-companies";
+    public static String FILENAME_SITEMAP_COMPANIES = "companies";
 
     /**
-     * Filename sitemapindex-companies-hashtags
+     * Filename -companies
      */
-    public static String FILENAME_SITEMAP_COMPANIES_HASHTAGS = "sitemapindex-companies-hashtags";
+    public static String FILENAME_SITEMAP_TOPNCOMPANIES = "topNcompanies";
+
+
+    /**
+     * Filename -companies-hashtags
+     */
+    public static String FILENAME_SITEMAP_COMPANIES_HASHTAGS = "companies-hashtags";
 
     /**
      * Sitemap version
      */
     public static String SITEMAP_VERSION = "v2";
+
+    /**
+     * Sitemap URL
+     */
+    public static String SITEMAP_URL = "https://www.sikayetvar.com/";
 
     /**
      * Slack sv chanel
@@ -170,6 +185,7 @@ public class Configuration {
                 NUMBER_OF_THREADS = config.getInt("engine.numberOfThreads", NUMBER_OF_THREADS);
                 MAX_NUMBER_OF_HASHTAGS_IN_COMBINATION = config.getInt("engine.maxNumberOfHashtagsInCombination", MAX_NUMBER_OF_HASHTAGS_IN_COMBINATION);
                 MIN_NUMBER_OF_COMPLAINTS_ON_URL = config.getInt("engine.minNumberOfComplaintsOnURL", MIN_NUMBER_OF_COMPLAINTS_ON_URL);
+                TOP_N_UPTODATE_COMPANIES = config.getInt("engine.topNUptodateCompanies", TOP_N_UPTODATE_COMPANIES);
                 SQL_GET_CORPUS = config.getString("engine.getCorpusSQL", SQL_GET_CORPUS);
                 SQL_GET_COMPANIES = config.getString("engine.getCompaniesSQL", SQL_GET_COMPANIES);
                 SQL_GET_COMPLAINTS= config.getString("engine.getComplaintsSQL", SQL_GET_COMPLAINTS);
@@ -177,8 +193,10 @@ public class Configuration {
                 FILENAME_SITEMAP_INDEX_HOME = config.getString("engine.fileNameSitemapIndexHome", FILENAME_SITEMAP_INDEX_HOME);
                 FILENAME_SITEMAP_COMPLAINTS = config.getString("engine.fileNameSitemapComplaints", FILENAME_SITEMAP_COMPLAINTS);
                 FILENAME_SITEMAP_COMPANIES = config.getString("engine.fileNameSitemapCompanies", FILENAME_SITEMAP_COMPANIES);
+                FILENAME_SITEMAP_TOPNCOMPANIES = config.getString("engine.fileNameSitemapTopNCompanies", FILENAME_SITEMAP_TOPNCOMPANIES);
                 FILENAME_SITEMAP_COMPANIES_HASHTAGS = config.getString("engine.fileNameSitemapCompaniesHashtags", FILENAME_SITEMAP_COMPANIES_HASHTAGS);
                 SITEMAP_VERSION = config.getString("engine.sitemapVersion", SITEMAP_VERSION);
+                SITEMAP_URL = config.getString("engine.sitemapURL", SITEMAP_URL);
                 SLACK_SERVICE_ERRORS_URL = config.getString("engine.slackServiceURL", SLACK_SERVICE_ERRORS_URL);
                 NOTIFY_THE_END = config.getBoolean("engine.notifyTheEnd", NOTIFY_THE_END);
 

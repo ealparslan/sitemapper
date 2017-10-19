@@ -9,14 +9,16 @@ public class Complaint {
 
     private int complaint_id;
     private Date update_time;
+    private Date sikayet_time;
     private int complaint_company_id;
     private String url;
     private int len;
     private int silindi;
 
-    public Complaint(int complaint_id, Date update_time, int complaint_company_id, String url, int len, int silindi) {
+    public Complaint(int complaint_id, Date update_time,Date sikayet_time, int complaint_company_id, String url, int len, int silindi) {
         this.complaint_id = complaint_id;
         this.update_time = update_time;
+        this.sikayet_time = sikayet_time;
         this.complaint_company_id = complaint_company_id;
         this.url = url;
         this.len = len;
@@ -37,6 +39,14 @@ public class Complaint {
 
     public void setUpdate_time(Date update_time) {
         this.update_time = update_time;
+    }
+
+    public Date getSikayet_time() {
+        return sikayet_time;
+    }
+
+    public void setSikayet_time(Date sikayet_time) {
+        this.sikayet_time = sikayet_time;
     }
 
     public int getComplaint_company_id() {
