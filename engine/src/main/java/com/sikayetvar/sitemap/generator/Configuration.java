@@ -61,6 +61,18 @@ public class Configuration {
      */
     public static int TOP_N_UPTODATE_COMPANIES = 1000;
 
+
+    /**
+     * WRITE Which
+     */
+    public static boolean WRITE_TOP_N_UPTODATE_COMPANIES = true;
+    public static boolean WRITE_ALL_COMPANIES = false;
+    public static boolean WRITE_COMPANIES_HAVING_COMPLAINT = true;
+    public static boolean WRITE_COMPLAINTS = true;
+    public static boolean WRITE_COMPANIES_HASHTAGS = true;
+
+
+
     /**
      * Database to be used for data access. Default to "MYSQL"
      */
@@ -70,17 +82,19 @@ public class Configuration {
      * Database connection URL to connect to database
      */
     //public static String DATABASE_CONNECTION_URL = "jdbc:mysql://curiosity.sikayetvar.com:3307/textmining?characterEncoding=UTF-8&amp;useSSL=false&amp;rewriteBatchedStatements=true";
-    public static String DATABASE_CONNECTION_URL = "jdbc:mysql://localhost/textmining?characterEncoding=UTF-8&amp;useSSL=false&amp;rewriteBatchedStatements=true";
+    //public static String DATABASE_CONNECTION_URL = "jdbc:mysql://localhost/textmining?characterEncoding=UTF-8&amp;useSSL=false&amp;rewriteBatchedStatements=true";
+    public static String DATABASE_CONNECTION_URL = "jdbc:mysql://complaintlineweb.eastus.cloudapp.azure.com:3306/textmining_en?characterEncoding=UTF-8&amp;useSSL=false&amp;rewriteBatchedStatements=true";
+
 
     /**
      * Database username to connect to database
      */
-    public static String DATABASE_USERNAME = "textminer";
+    public static String DATABASE_USERNAME = "complaint";
 
     /**
      * Database password to connect to database
      */
-    public static String DATABASE_PASSWORD = "3BY98DJnmtfpZgzmusT3";
+    public static String DATABASE_PASSWORD = "1KWNl7UBy3lq";
 
     /**
      * Redis host URL for complaint detail set
@@ -105,22 +119,22 @@ public class Configuration {
     /**
      * GetCorpus SQL
      */
-    public static String SQL_GET_CORPUS = "select id,term from textmining.corpus";
+    public static String SQL_GET_CORPUS = "select id,term from corpus";
 
     /**
      * GetCompanies SQL
      */
-    public static String SQL_GET_COMPANIES = "select id,name from textmining.v_sitemap_companies";
+    public static String SQL_GET_COMPANIES = "select id,name from v_sitemap_companies";
 
     /**
      * GetComplaints SQL
      */
-    public static String SQL_GET_COMPLAINTS = "select complaint_id,update_time,complaint_company_id,url,len,silindi from textmining.v_sitemap_complaints";
+    public static String SQL_GET_COMPLAINTS = "select complaint_id,update_time,complaint_company_id,url,len,silindi from v_sitemap_complaints";
 
     /**
      * GetComplainthashtags SQL
      */
-    public static String SQL_GET_COMPLAINTHASHTAGS = "select complaint_id,hashtag_id from textmining.v_sitemap_complaint_hashtags";
+    public static String SQL_GET_COMPLAINTHASHTAGS = "select complaint_id,hashtag_id from v_sitemap_complaint_hashtags";
 
     /**
      * Filename -home
@@ -158,6 +172,7 @@ public class Configuration {
      */
     public static String SITEMAP_URL = "https://www.sikayetvar.com/";
 
+
     /**
      * Slack sv chanel
      */
@@ -186,6 +201,11 @@ public class Configuration {
                 MAX_NUMBER_OF_HASHTAGS_IN_COMBINATION = config.getInt("engine.maxNumberOfHashtagsInCombination", MAX_NUMBER_OF_HASHTAGS_IN_COMBINATION);
                 MIN_NUMBER_OF_COMPLAINTS_ON_URL = config.getInt("engine.minNumberOfComplaintsOnURL", MIN_NUMBER_OF_COMPLAINTS_ON_URL);
                 TOP_N_UPTODATE_COMPANIES = config.getInt("engine.topNUptodateCompanies", TOP_N_UPTODATE_COMPANIES);
+                WRITE_TOP_N_UPTODATE_COMPANIES = config.getBoolean("engine.writeTopNCompanies", WRITE_TOP_N_UPTODATE_COMPANIES);
+                WRITE_ALL_COMPANIES = config.getBoolean("engine.writeAllCompanies", WRITE_ALL_COMPANIES);
+                WRITE_COMPANIES_HAVING_COMPLAINT = config.getBoolean("engine.writeCompaniesHavingComplaint", WRITE_COMPANIES_HAVING_COMPLAINT);
+                WRITE_COMPLAINTS = config.getBoolean("engine.writeComplaints", WRITE_COMPLAINTS);
+                WRITE_COMPANIES_HASHTAGS = config.getBoolean("engine.writeCompaniesHashtags", WRITE_COMPANIES_HASHTAGS);
                 SQL_GET_CORPUS = config.getString("engine.getCorpusSQL", SQL_GET_CORPUS);
                 SQL_GET_COMPANIES = config.getString("engine.getCompaniesSQL", SQL_GET_COMPANIES);
                 SQL_GET_COMPLAINTS= config.getString("engine.getComplaintsSQL", SQL_GET_COMPLAINTS);

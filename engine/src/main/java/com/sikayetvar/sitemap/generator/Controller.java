@@ -55,7 +55,8 @@ public class Controller {
 
         MySQLDataOperator.getInstance().initDatasources();
 
-        controller.writeComplaintURLs();
+        if(Configuration.WRITE_COMPLAINTS)
+            controller.writeComplaintURLs();
 
         controller.all_complaint_hashtags_list = MySQLDataOperator.getInstance().getComplaintHashtags();
 
@@ -75,9 +76,14 @@ public class Controller {
 
         logger.info("companyHashtagURLs Calculated!");
 
-        controller.writeTopNCompanyURLs();
-        controller.writeCompanyHashtagURLs();
-        controller.writeCompanyURLs();
+        if(Configuration.WRITE_TOP_N_UPTODATE_COMPANIES)
+            controller.writeTopNCompanyURLs();
+        if(Configuration.WRITE_COMPANIES_HASHTAGS)
+            controller.writeCompanyHashtagURLs();
+        if(Configuration.WRITE_COMPANIES_HAVING_COMPLAINT)
+            controller.writeCompanyURLs();
+        if(Configuration.WRITE_ALL_COMPANIES)
+            controller.writeAllCompanyURLs();
         logger.info(sw.toString());
 
         if(Configuration.NOTIFY_THE_END)
@@ -179,6 +185,24 @@ public class Controller {
         } catch (Exception e) {
             logger.error("new node could not be added! URL: "+ url,e);
         }
+    }
+
+    private void writeAllCompanyURLs(){
+        HashMap<Integer,String> companies = MySQLDataOperator.getInstance().companies;
+        companies.forEach((id,company)
+                -> {
+            if(null != company) companyURLs.put(company,new Date());
+        });
+        try {
+
+            Utils.getInstance().writeToFile(companyURLs,Configuration.FILENAME_SITEMAP_COMPANIES, "company");
+
+        } catch (FileNotFoundException e) {
+            logger.error("Controller.Main FileNotFoundException during writing into file",e);
+        } catch (UnsupportedEncodingException e) {
+            logger.error("Controller.Main UnsupportedEncodingException during writing into file",e);
+        }
+        logger.info("cumpanyURLs written!");
     }
 
     private void writeComplaintURLs(){

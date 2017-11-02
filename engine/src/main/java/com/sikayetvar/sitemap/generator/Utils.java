@@ -35,14 +35,28 @@ public class Utils {
 
     protected Utils() {
         try {
-            companyMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/company"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
-            companyMapIndexWriter.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
-            topNCompanyMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/topNcompany"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
-            topNCompanyMapIndexWriter.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
-            complaintMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/complaint"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
-            complaintMapIndexWriter.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
-            hashtagMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/hashtag"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
-            hashtagMapIndexWriter.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
+
+            if(Configuration.WRITE_TOP_N_UPTODATE_COMPANIES)
+            {
+                topNCompanyMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/topNcompany"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
+                topNCompanyMapIndexWriter.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
+            }
+            if(Configuration.WRITE_COMPANIES_HASHTAGS)
+            {
+                hashtagMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/hashtag"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
+                hashtagMapIndexWriter.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
+            }
+            if(Configuration.WRITE_COMPANIES_HAVING_COMPLAINT || Configuration.WRITE_ALL_COMPANIES)
+            {
+                companyMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/company"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
+                companyMapIndexWriter.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
+            }
+            if(Configuration.WRITE_COMPLAINTS)
+            {
+                complaintMapIndexWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("sitemap/complaint"+ Configuration.SITEMAP_VERSION + ".xml"), "utf-8"));
+                complaintMapIndexWriter.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n");
+            }
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
@@ -62,14 +76,27 @@ public class Utils {
 
     public void  disposeInstance() {
         try {
-            companyMapIndexWriter.write("</sitemapindex>");
-            companyMapIndexWriter.close();
-            topNCompanyMapIndexWriter.write("</sitemapindex>");
-            topNCompanyMapIndexWriter.close();
-            complaintMapIndexWriter.write("</sitemapindex>");
-            complaintMapIndexWriter.close();
-            hashtagMapIndexWriter.write("</sitemapindex>");
-            hashtagMapIndexWriter.close();
+            if(Configuration.WRITE_TOP_N_UPTODATE_COMPANIES)
+            {
+                topNCompanyMapIndexWriter.write("</sitemapindex>");
+                topNCompanyMapIndexWriter.close();
+            }
+            if(Configuration.WRITE_COMPANIES_HASHTAGS)
+            {
+                hashtagMapIndexWriter.write("</sitemapindex>");
+                hashtagMapIndexWriter.close();
+            }
+            if(Configuration.WRITE_COMPANIES_HAVING_COMPLAINT || Configuration.WRITE_ALL_COMPANIES)
+            {
+                companyMapIndexWriter.write("</sitemapindex>");
+                companyMapIndexWriter.close();
+            }
+            if(Configuration.WRITE_COMPLAINTS)
+            {
+                complaintMapIndexWriter.write("</sitemapindex>");
+                complaintMapIndexWriter.close();
+            }
+
         } catch (IOException e) {
             logger.error("Could not close sitemapindex file!",e);
         }
