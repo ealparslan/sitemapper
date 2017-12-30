@@ -26,6 +26,10 @@ public class ComplaintHashtag {
     }
 
     public String getCompany() {
+        return company;
+    }
+
+    public String getCompanySlugged() {
         return Utils.getInstance().toSlug(company);
     }
 
@@ -71,8 +75,8 @@ public class ComplaintHashtag {
     }
 
 
-    public Set<Set<String>> getCombinations(){
-        Set<Set<String>> allCombinations = new HashSet<Set<String>>();
+    public Set<SortedSet<String>> getCombinations(){
+        Set<SortedSet<String>> allCombinations = new HashSet<>();
 
         // define a sorted set of hashtags for that complaint
         SortedSet<String> biggestSet = new TreeSet<String>();
@@ -80,7 +84,7 @@ public class ComplaintHashtag {
         for (String hashtag:hashtags) {
             try {
                 if(null != hashtag && hashtag != "" & hashtag != "null")
-                    biggestSet.add(Utils.getInstance().toSlug(hashtag));
+                    biggestSet.add(hashtag);
             } catch (Exception e) {
                 logger.error("Error in biggest set generation. hashtag = /" + hashtag + "/",e);
             }

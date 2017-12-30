@@ -1,6 +1,7 @@
 package com.sikayetvar.sitemap.generator.dao;
 
 import com.sikayetvar.sitemap.generator.Configuration;
+import com.sikayetvar.sitemap.generator.entity.Company;
 import com.sikayetvar.sitemap.generator.entity.Complaint;
 import com.sikayetvar.sitemap.generator.entity.ComplaintHashtag;
 
@@ -22,7 +23,7 @@ public class MySQLDataOperator {
     private PreparedStatement statement = null;
     private ResultSet resultSet = null;
     public HashMap<Integer,String> corpus = null;
-    public HashMap<Integer,String> companies = null;
+    public HashMap<Integer,Company> companies = null;
     public HashMap<Integer,Complaint> complaints = null;
     private static final Logger logger = LoggerFactory.getLogger(MySQLDataOperator.class);
     private int focused_complaint;
@@ -106,14 +107,14 @@ public class MySQLDataOperator {
         return complaints;
     }
 
-    public HashMap<Integer,String> getCompanies(){
-        HashMap<Integer,String> companies = new HashMap<Integer, String>();
+    public HashMap<Integer,Company> getCompanies(){
+        HashMap<Integer,Company> companies = new HashMap<Integer, Company>();
 
         try {
             statement = connect.prepareStatement(Configuration.SQL_GET_COMPANIES);
             resultSet = statement.executeQuery();
             while (resultSet.next()){
-                companies.put(resultSet.getInt(1),resultSet.getString(2));
+                companies.put(resultSet.getInt(1),new Company(resultSet.getInt(1),resultSet.getString(2),resultSet.getInt(3)));
             }
         }
         catch (Exception e){
@@ -166,7 +167,7 @@ public class MySQLDataOperator {
             complaintHashtag = new ComplaintHashtag();
             complaintHashtag.setComplaint_id(on_complaint);
             try {
-                complaintHashtag.setCompany(companies.get(complaints.get(on_complaint).getComplaint_company_id()));
+                complaintHashtag.setCompany(companies.get(complaints.get(on_complaint).getComplaint_company_id()).getName());
             } catch (Exception e) {
                 logger.error("Exception in MySQLDAO.getComplaintHashtags:  Complaint or Company not found. on_complaint " + on_complaint ,e);
             }

@@ -24,7 +24,7 @@ public class Configuration {
      * When DEBUG flag is set to true, this many records are read from database
      * This is the number of records from SQL_GET_COMPLAINTHASHTAGS
      */
-    public static int DEBUG_COMPLAINT_HASHTAGS_SAMPLE_SIZE = 10000000;
+    public static int DEBUG_COMPLAINT_HASHTAGS_SAMPLE_SIZE = 1000;
 
     /**
      * In production due to the ram considerations we are processing in batches
@@ -40,6 +40,21 @@ public class Configuration {
      * When to insert log record while saving entities to database
      */
     public static int WRITE_TO_SITEMAP_SIZE = 40000;
+
+    /**
+     * Will generate autocomplete index?
+     */
+    public static boolean STASH_IN_ELASTIC = true;
+
+    /**
+     * will serialize computed ConcurrentHashMaps into .ser files
+     */
+    public static boolean SERIALIZE_DATA = true;
+
+    /**
+     * When to insert batch of documents into the elasticsearch
+     */
+    public static int WRITE_TO_ELASTIC_SIZE = 1000;
 
     /**
      * For parallel processing. Default 1
@@ -72,6 +87,8 @@ public class Configuration {
     public static boolean WRITE_COMPANIES_HASHTAGS = true;
 
 
+    public static boolean WRITE_LAST_UPDATE_TIME = false;
+
 
     /**
      * Database to be used for data access. Default to "MYSQL"
@@ -82,39 +99,40 @@ public class Configuration {
      * Database connection URL to connect to database
      */
     //public static String DATABASE_CONNECTION_URL = "jdbc:mysql://curiosity.sikayetvar.com:3307/textmining?characterEncoding=UTF-8&amp;useSSL=false&amp;rewriteBatchedStatements=true";
-    //public static String DATABASE_CONNECTION_URL = "jdbc:mysql://localhost/textmining?characterEncoding=UTF-8&amp;useSSL=false&amp;rewriteBatchedStatements=true";
-    public static String DATABASE_CONNECTION_URL = "jdbc:mysql://complaintlineweb.eastus.cloudapp.azure.com:3306/textmining_en?characterEncoding=UTF-8&amp;useSSL=false&amp;rewriteBatchedStatements=true";
+    public static String DATABASE_CONNECTION_URL = "jdbc:mysql://db1:3306/textmining?characterEncoding=UTF-8&amp;useSSL=false&amp;rewriteBatchedStatements=true";
+//    public static String DATABASE_CONNECTION_URL = "jdbc:mysql://complaintlineweb.eastus.cloudapp.azure.com:3306/textmining_en?characterEncoding=UTF-8&amp;useSSL=false&amp;rewriteBatchedStatements=true";
 
 
     /**
      * Database username to connect to database
      */
-    public static String DATABASE_USERNAME = "complaint";
+    public static String DATABASE_USERNAME = "dbuser";
 
     /**
      * Database password to connect to database
      */
-    public static String DATABASE_PASSWORD = "1KWNl7UBy3lq";
+    public static String DATABASE_PASSWORD = "muqBX2nKup5S";
 
     /**
-     * Redis host URL for complaint detail set
+     * Elasticsearch host URL
      */
-    public static String REDIS_COMPLAINT_DETAIL_HOST = "luna.sikayetvar.com";
+    public static String ELASTICSEARCH_HOST = "elktomcat";
 
     /**
-     * Redis port for complaint detail set
+     * Elasticsearch port
      */
-    public static int REDIS_COMPLAINT_DETAIL_PORT = 6382;
+    public static int ELASTICSEARCH_PORT = 9300;
 
     /**
-     * Database username to connect to database
+     * Elasticsearch index
      */
-    public static String REDIS_COMPLAINT_DETAIL_HOST_USERNAME = "";
+    public static String ELASTICSEARCH_INDEX = "autocomplete5";
 
     /**
-     * Database password to connect to database
+     * Elasticsearch type
      */
-    public static String REDIS_COMPLAINT_DETAIL_HOST_PASSWORD = "";
+    public static String ELASTICSEARCH_TYPE = "entite";
+
 
     /**
      * GetCorpus SQL
@@ -124,7 +142,7 @@ public class Configuration {
     /**
      * GetCompanies SQL
      */
-    public static String SQL_GET_COMPANIES = "select id,name from v_sitemap_companies";
+    public static String SQL_GET_COMPANIES = "select id,name,guncel_sikayet_sayisi  from v_sitemap_companies";
 
     /**
      * GetComplaints SQL
@@ -170,7 +188,13 @@ public class Configuration {
     /**
      * Sitemap URL
      */
-    public static String SITEMAP_URL = "https://www.sikayetvar.com/";
+    public static String SITEMAP_URL = "https://www.sikayetvar.com/sitemap/";
+
+    /**
+     * BASE URL
+     */
+    public static String BASE_URL = "https://www.sikayetvar.com/";
+
 
 
     /**
@@ -193,10 +217,17 @@ public class Configuration {
                 DATABASE_CONNECTION_URL = config.getString("engine.databaseConnectionURL", DATABASE_CONNECTION_URL);
                 DATABASE_USERNAME = config.getString("engine.databaseUsername", DATABASE_USERNAME);
                 DATABASE_PASSWORD = config.getString("engine.databasePassword", DATABASE_PASSWORD);
+                ELASTICSEARCH_HOST = config.getString("engine.elasticHost", ELASTICSEARCH_HOST);
+                ELASTICSEARCH_PORT = config.getInt("engine.elasticPort", ELASTICSEARCH_PORT);
+                ELASTICSEARCH_INDEX = config.getString("engine.elasticIndex", ELASTICSEARCH_INDEX);
+                ELASTICSEARCH_TYPE = config.getString("engine.elasticType", ELASTICSEARCH_TYPE);
                 DEBUG_COMPLAINT_HASHTAGS_SAMPLE_SIZE = config.getInt("engine.debugComplaintHashtagsSampleSize", DEBUG_COMPLAINT_HASHTAGS_SAMPLE_SIZE);
                 COMPLAINT_HASHTAGS_CHUNK_SIZE = config.getInt("engine.complaintHashtagsChunkSize", COMPLAINT_HASHTAGS_CHUNK_SIZE);
                 NOTIFY_ROW_SIZE = config.getInt("engine.notifyRowSize", NOTIFY_ROW_SIZE);
                 WRITE_TO_SITEMAP_SIZE = config.getInt("engine.writeToSitemapSize", WRITE_TO_SITEMAP_SIZE);
+                STASH_IN_ELASTIC = config.getBoolean("engine.stashInElastic", STASH_IN_ELASTIC);
+                SERIALIZE_DATA = config.getBoolean("engine.serializeData", SERIALIZE_DATA);
+                WRITE_TO_ELASTIC_SIZE = config.getInt("engine.writeToElasticSize", WRITE_TO_ELASTIC_SIZE);
                 NUMBER_OF_THREADS = config.getInt("engine.numberOfThreads", NUMBER_OF_THREADS);
                 MAX_NUMBER_OF_HASHTAGS_IN_COMBINATION = config.getInt("engine.maxNumberOfHashtagsInCombination", MAX_NUMBER_OF_HASHTAGS_IN_COMBINATION);
                 MIN_NUMBER_OF_COMPLAINTS_ON_URL = config.getInt("engine.minNumberOfComplaintsOnURL", MIN_NUMBER_OF_COMPLAINTS_ON_URL);
@@ -206,6 +237,7 @@ public class Configuration {
                 WRITE_COMPANIES_HAVING_COMPLAINT = config.getBoolean("engine.writeCompaniesHavingComplaint", WRITE_COMPANIES_HAVING_COMPLAINT);
                 WRITE_COMPLAINTS = config.getBoolean("engine.writeComplaints", WRITE_COMPLAINTS);
                 WRITE_COMPANIES_HASHTAGS = config.getBoolean("engine.writeCompaniesHashtags", WRITE_COMPANIES_HASHTAGS);
+                WRITE_LAST_UPDATE_TIME = config.getBoolean("engine.writeLastUpdateTime", WRITE_LAST_UPDATE_TIME);
                 SQL_GET_CORPUS = config.getString("engine.getCorpusSQL", SQL_GET_CORPUS);
                 SQL_GET_COMPANIES = config.getString("engine.getCompaniesSQL", SQL_GET_COMPANIES);
                 SQL_GET_COMPLAINTS= config.getString("engine.getComplaintsSQL", SQL_GET_COMPLAINTS);
@@ -217,9 +249,9 @@ public class Configuration {
                 FILENAME_SITEMAP_COMPANIES_HASHTAGS = config.getString("engine.fileNameSitemapCompaniesHashtags", FILENAME_SITEMAP_COMPANIES_HASHTAGS);
                 SITEMAP_VERSION = config.getString("engine.sitemapVersion", SITEMAP_VERSION);
                 SITEMAP_URL = config.getString("engine.sitemapURL", SITEMAP_URL);
+                BASE_URL = config.getString("engine.baseURL", BASE_URL);
                 SLACK_SERVICE_ERRORS_URL = config.getString("engine.slackServiceURL", SLACK_SERVICE_ERRORS_URL);
                 NOTIFY_THE_END = config.getBoolean("engine.notifyTheEnd", NOTIFY_THE_END);
-
 
             } else {
                 logger.info("Config file <" + configFile.getName() + "> not found");

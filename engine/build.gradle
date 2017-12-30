@@ -55,4 +55,5 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-configuration2', version: '2.1'
     compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.3'
     compile group: 'com.ecyrd.speed4j', name: 'speed4j', version: '0.18'
+    compile group: 'org.elasticsearch.client', name: 'transport', version: '6.1.0'
 }
