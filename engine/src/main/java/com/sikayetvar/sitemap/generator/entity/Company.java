@@ -5,6 +5,15 @@ public class Company {
     private int id;
     private String name;
     private int complaintCount;
+    private boolean sikayetAlmis;
+
+    public boolean isSikayetAlmis() {
+        return sikayetAlmis;
+    }
+
+    public void setSikayetAlmis(boolean sikayetAlmis) {
+        this.sikayetAlmis = sikayetAlmis;
+    }
 
     public int getId() {
         return id;
@@ -31,10 +40,11 @@ public class Company {
         this.complaintCount = complaintCount;
     }
 
-    public Company( int id,String name, int complaintCount) {
+    public Company( int id,String name, int complaintCount, boolean sikayetAlmis) {
         this.name = name;
         this.complaintCount = complaintCount;
         this.id = id;
+        this.sikayetAlmis = sikayetAlmis;
     }
 
 }

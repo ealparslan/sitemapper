@@ -135,12 +135,12 @@ public class Controller {
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.YEAR, -1);
 
-            Date update_time = complaint.getUpdate_time();
+            Date puplishTime = complaint.getPublish_time();
 
             if (complaint.isMalformed()) continue;
 
             // we have companyURLs from previous fillCompanies step. But we have to adjust mostUptoDate variable due to the last complaint of the company
-            enrichCompanyURLs(complaint.getCompany(), update_time);
+            enrichCompanyURLs(complaint.getCompany(), puplishTime);
 
             if(publish_time.before(cal.getTime())) continue; // company hastags and hashtags url is not affected with prior than 1 year complaints
 
@@ -148,9 +148,9 @@ public class Controller {
             for (SortedSet<String> combination:complaint.getCombinations()) {
                 if(combination.isEmpty()) continue;
                 // hashtag1 + hashtag2 .....
-                enrichCompanyHashtagURLs(combination, null , update_time);
+                enrichCompanyHashtagURLs(combination, null , puplishTime);
                 // brand + hashtag1 + hashtag2 .....
-                enrichCompanyHashtagURLs(combination,complaint.getCompany(), update_time);
+                enrichCompanyHashtagURLs(combination,complaint.getCompany(), puplishTime);
 
             }
 
@@ -164,16 +164,16 @@ public class Controller {
     }
 
 
-    public void enrichCompanyHashtagURLs(SortedSet<String> combination,String company, Date update_time){
+    public void enrichCompanyHashtagURLs(SortedSet<String> combination,String company, Date publishTime){
 
         StringBuilder sb;
         int count = 0;
         int priority = 3;
-        Date mostUpToDate = update_time;
+        Date mostUpToDate = publishTime;
         String url;
         String hashtagPart = combination.stream().map(h -> h = Utils.getInstance().toSlug(h)).collect(Collectors.joining("/"));
 
-        // we use combinationPersist because combination may be overrided in different steps of the application espacially in function enrichCompanyHashtagURLs(combination,complaint.getCompany(), update_time);
+        // we use combinationPersist because combination may be overrided in different steps of the application espacially in function enrichCompanyHashtagURLs(combination,complaint.getCompany(), publishTime);
         SortedSet<String> combinationPersist = new TreeSet<>();
         combination.stream().forEach(comb -> combinationPersist.add(comb));
 
@@ -189,7 +189,7 @@ public class Controller {
 
         try {
             if(companyHashtagURLs.containsKey(url)){
-                if(companyHashtagURLs.get(url).getMostUpToDate().after(update_time))
+                if(companyHashtagURLs.get(url).getMostUpToDate().after(publishTime))
                     mostUpToDate = companyHashtagURLs.get(url).getMostUpToDate();
                 count = companyHashtagURLs.get(url).getCount();
                 priority = companyHashtagURLs.get(url).getPriority();
@@ -297,7 +297,7 @@ public class Controller {
     public void writeCompanyURLs(){
         HashMap<String,URLMeta> companyURLsHavingComplaint = new HashMap<>();
         try {
-            // establish a new HashMap<String,URLMeta> for the companies only having at least 1 complaint
+            // establish a new HashMap<String,URLMeta> for the companies only having at least 1 complaint in ALL times
             for(Map.Entry<String,URLMeta> entry : companyURLs.entrySet()) {
                 if(entry.getValue().getCount() > 0)
                     companyURLsHavingComplaint.put(entry.getKey(),entry.getValue());

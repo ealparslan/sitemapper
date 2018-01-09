@@ -114,7 +114,7 @@ public class MySQLDataOperator {
             statement = connect.prepareStatement(Configuration.SQL_GET_COMPANIES);
             resultSet = statement.executeQuery();
             while (resultSet.next()){
-                companies.put(resultSet.getInt(1),new Company(resultSet.getInt(1),resultSet.getString(2),resultSet.getInt(3)));
+                companies.put(resultSet.getInt(1),new Company(resultSet.getInt(1),resultSet.getString(2),resultSet.getInt(3),resultSet.getBoolean(4)));
             }
         }
         catch (Exception e){

@@ -142,12 +142,12 @@ public class Configuration {
     /**
      * GetCompanies SQL
      */
-    public static String SQL_GET_COMPANIES = "select id,name,guncel_sikayet_sayisi  from v_sitemap_companies";
+    public static String SQL_GET_COMPANIES = "select id,name,guncel_sikayet_sayisi,sikayet_almis from v_sitemap_companies";
 
     /**
      * GetComplaints SQL
      */
-    public static String SQL_GET_COMPLAINTS = "select complaint_id,update_time,complaint_company_id,url,len,silindi from v_sitemap_complaints";
+    public static String SQL_GET_COMPLAINTS = "select complaint_id,update_time,sikayet_tarihi,complaint_company_id,url,len,silindi from textmining.v_sitemap_complaints";
 
     /**
      * GetComplainthashtags SQL
