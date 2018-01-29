@@ -13,6 +13,8 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 public class Configuration {
     private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
+    public static boolean FORCOMPLAINTLINE = true;
+
     /* PARAMETERS AND THEIR DEFAULT VALUES. ALL VALUES ARE OVERRIDDEN BY PROPERTIES FILE */
     /**
      * DEBUG flag, for debugging purposes only.
@@ -207,11 +209,12 @@ public class Configuration {
     static {
         Configurations configs = new Configurations();
         try {
-            File configFile = new File("engine.properties");
+            File configFile = new File("/Users/da/Documents/IdeaProjects/sitemapper/sitemapper/engine/src/main/resources/engine.properties");
 
             if (configFile.exists()) {
                 org.apache.commons.configuration2.Configuration config = configs.properties(configFile);
 
+                FORCOMPLAINTLINE = config.getBoolean("engine.forcomplaintline", FORCOMPLAINTLINE);
                 DEBUG = config.getBoolean("engine.debug", DEBUG);
                 DATABASE = config.getString("engine.database", DATABASE);
                 DATABASE_CONNECTION_URL = config.getString("engine.databaseConnectionURL", DATABASE_CONNECTION_URL);

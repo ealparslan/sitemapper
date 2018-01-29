@@ -291,6 +291,9 @@ public class Controller {
         } catch (UnsupportedEncodingException e) {
             logger.error("Controller.Main UnsupportedEncodingException during writing into file",e);
         }
+        catch (Exception ex){
+            logger.error(ex.getMessage(), ex);
+        }
         logger.info("companyHashtagURLs written!");
     }
 

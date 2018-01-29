@@ -118,7 +118,7 @@ public class Utils {
                 complaintMapIndexWriter.close();
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("Could not close sitemapindex file!",e);
         }
 
@@ -235,8 +235,9 @@ public class Utils {
                 try {
                     writer.append("</urlset>");
                     writer.close();
+                    logger.info("closed it!!!" + fileIndex);
                     hashtagMapIndexWriter.write("<sitemap><loc>" + Configuration.SITEMAP_URL + fileName +  Configuration.SITEMAP_VERSION  + "-" + fileIndex + ".xml.gz" + "</loc>"+ (Configuration.WRITE_LAST_UPDATE_TIME ? "<lastmod>" +  dateFormat.format(new Timestamp(System.currentTimeMillis())) + "\n"+ "</lastmod>" : "" ) +"</sitemap>");
-                } catch (IOException e) {
+                } catch (Exception e) {
                     logger.error("Could not close file!",e);
                 }
                 fileIndex++;
@@ -248,7 +249,8 @@ public class Utils {
                     logger.error("Could not open next file!",e);
                 }            }
             try {
-                writer.append("<url><loc>" +  Configuration.BASE_URL  + entry.getKey() + "</loc>" + (Configuration.WRITE_LAST_UPDATE_TIME ? "<lastmod>" +  fromIstDate(entry.getValue().getMostUpToDate()) + "\n" + "</lastmod>" : "" )+ "</url>");
+                writer.append("<url><loc>" +  Configuration.BASE_URL  + entry.getKey() + "</loc>" + ((Configuration.WRITE_LAST_UPDATE_TIME && (!Configuration.FORCOMPLAINTLINE || !fromIstDate(entry.getValue().getMostUpToDate()).startsWith("2010-01-01")))? "<lastmod>" +  fromIstDate(entry.getValue().getMostUpToDate()) + "\n" + "</lastmod>" : "" )+ "</url>");
+
             } catch (IOException e) {
                 logger.error("Could not write to file! " + entry.getKey() + " " + entry.getValue(),e);
             }
@@ -256,6 +258,7 @@ public class Utils {
         try {
             writer.append("</urlset>");
             writer.close();
+            logger.info("closed it!!!" + fileIndex);
             hashtagMapIndexWriter.write("<sitemap><loc>" + Configuration.SITEMAP_URL + fileName +  Configuration.SITEMAP_VERSION  + "-" + fileIndex + ".xml.gz" + "</loc>"+ (Configuration.WRITE_LAST_UPDATE_TIME ? "<lastmod>" +  dateFormat.format(new Timestamp(System.currentTimeMillis())) + "\n"+ "</lastmod>" : "" ) +"</sitemap>");
         } catch (IOException e) {
             logger.error("Could not close file!",e);
@@ -283,6 +286,7 @@ public class Utils {
                 try {
                     writer.append("</urlset>");
                     writer.close();
+                    logger.info("closed it!!!" + fileIndex);
                     String writeMainSitemapIndex = "<sitemap><loc>" + Configuration.SITEMAP_URL + fileName +  Configuration.SITEMAP_VERSION  + "-" + fileIndex + ".xml.gz" + "</loc>"+ (Configuration.WRITE_LAST_UPDATE_TIME ? "<lastmod>" +  dateFormat.format(new Timestamp(System.currentTimeMillis())) + "\n"+ "</lastmod>" : "" ) +"</sitemap>";
                     if (whichSitemap.equals("company"))
                         companyMapIndexWriter.write(writeMainSitemapIndex);
@@ -292,7 +296,7 @@ public class Utils {
                         topNCompanyMapIndexWriter.write(writeMainSitemapIndex);
                     else
                         logger.error("Sitemap type is not selected! ");
-                } catch (IOException e) {
+                } catch (Exception e) {
                     logger.error("Could not close file!",e);
                 }
                 fileIndex++;
@@ -305,7 +309,7 @@ public class Utils {
                 }
             }
             try {
-                writer.append("<url><loc>" +  Configuration.BASE_URL  + entry.getKey() + "</loc>" + (Configuration.WRITE_LAST_UPDATE_TIME ? "<lastmod>" +  fromIstDate(entry.getValue().getMostUpToDate()) + "\n" + "</lastmod>" : "" )+ "</url>");
+                writer.append("<url><loc>" +  Configuration.BASE_URL  + entry.getKey() + "</loc>" + ((Configuration.WRITE_LAST_UPDATE_TIME && (!Configuration.FORCOMPLAINTLINE || !fromIstDate(entry.getValue().getMostUpToDate()).startsWith("2010-01-01")))? "<lastmod>" +  fromIstDate(entry.getValue().getMostUpToDate()) + "\n" + "</lastmod>" : "" )+ "</url>");
             } catch (IOException e) {
                 logger.error("Could not write to file! " + entry.getKey() + " " + entry.getValue(),e);
             }
@@ -313,6 +317,7 @@ public class Utils {
         try {
             writer.append("</urlset>");
             writer.close();
+            logger.info("closed it!!!" + fileIndex);
             String writeMainSitemapIndex = "<sitemap><loc>" + Configuration.SITEMAP_URL + fileName +  Configuration.SITEMAP_VERSION  + "-" + fileIndex + ".xml.gz" + "</loc>"+ (Configuration.WRITE_LAST_UPDATE_TIME ? "<lastmod>" +  dateFormat.format(new Timestamp(System.currentTimeMillis())) + "\n"+ "</lastmod>" : "" ) +"</sitemap>";
             if (whichSitemap.equals("company"))
                 companyMapIndexWriter.write(writeMainSitemapIndex);
@@ -322,8 +327,9 @@ public class Utils {
                 topNCompanyMapIndexWriter.write(writeMainSitemapIndex);
             else
                 logger.error("Sitemap type is not selected! ");
-        } catch (IOException e) {
-            logger.error("Could not close file!",e);
+        }
+        catch (Exception ex){
+            logger.error(ex.getMessage(),ex );
         }
     }
 
