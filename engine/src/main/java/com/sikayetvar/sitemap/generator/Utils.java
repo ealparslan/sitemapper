@@ -54,7 +54,8 @@ public class Utils {
     protected Utils() {
         try {
 
-            elasticClient = new PreBuiltTransportClient(Settings.EMPTY).addTransportAddress(new TransportAddress(InetAddress.getByName(Configuration.ELASTICSEARCH_HOST), Configuration.ELASTICSEARCH_PORT));
+            if(Configuration.STASH_IN_ELASTIC)
+                elasticClient = new PreBuiltTransportClient(Settings.EMPTY).addTransportAddress(new TransportAddress(InetAddress.getByName(Configuration.ELASTICSEARCH_HOST), Configuration.ELASTICSEARCH_PORT));
 
             if(Configuration.WRITE_TOP_N_UPTODATE_COMPANIES)
             {
@@ -122,7 +123,8 @@ public class Utils {
             logger.error("Could not close sitemapindex file!",e);
         }
 
-        elasticClient.close();
+        if(Configuration.STASH_IN_ELASTIC)
+            elasticClient.close();
 
         instance = null;
     }
